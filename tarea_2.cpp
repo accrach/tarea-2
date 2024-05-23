@@ -1,36 +1,33 @@
 #include <iostream>
-#include <stdlib.h>
-#include<fstream>
-#include<string>
-using namespace std;
+#include <fstream>
+#include <string>
+#include <cstdlib>
 
+using namespace std;
 
 class super_string {
 private:
+    struct nodo {
+        nodo* left = nullptr, * right = nullptr;
+        int index;
+        char c;
+        nodo(int index, char c) : index(index), c(c) {}
+    };
 
-struct nodo {
-nodo *left = nullptr, *right = nullptr;
-int index;
-char c;
-nodo(int index, char c) {}
-};
-
-int height = 0; // Altura del árbol
-int length = 0; // Largo del super-string
-nodo* root = nullptr; // Raíz del super-string
+    int height = 0; // Altura del árbol
+    int length = 0; // Largo del super-string
+    nodo* root = nullptr; // Raíz del super-string
 
 public:
-
-super_string() {}
-void juntar(super_string &s);
-void agregar(char c); // Insertar un caracter en la última posición
-// En la izquierda esta el super_string a y en la derecha el super_string b
-void separar(int i, super_string &a, super_string &b);
-void reverso(); // No debe cambiar la altura del árbol
-int recortar(); // Retorna this->height después de recortar
-string stringizar(); // Debe ser O(n)
-void limpiar(); // Se deben borrar todos los nodos del super-string
-
+    super_string() {}
+    void juntar(super_string& s);
+    void agregar(char c); // Insertar un caracter en la última posición
+    // En la izquierda esta el super_string a y en la derecha el super_string b
+    void separar(int i, super_string& a, super_string& b);
+    void reverso(); // No debe cambiar la altura del árbol
+    int recortar(); // Retorna this->height después de recortar
+    string stringizar(); // Debe ser O(n)
+    void limpiar(); // Se deben borrar todos los nodos del super-string
 };
 
 int main() {
@@ -43,37 +40,51 @@ int main() {
     }
 
     string linea;
+    string instruccion;
+    string palabra_agregar;
+    string stg_posicion_int;
+    int posicion_instruccion;
+
     while (getline(archivo, linea)) { // lee el archivo 
-        size_t pos1 = linea.find(' '); // Encuentra la posición del primer espacio en la línea
-        if (pos1 != string::npos) { // Verifica si se encontró un espacio
-            par1 = linea.substr(0, pos1); // Obtiene la primera parte
-            size_t pos2 = linea.find(' ', pos1 + 1); // Encuentra la posición del segundo espacio
-            if (pos2 != string::npos) { // Verifica si se encontró un segundo espacio
-                par2 = linea.substr(pos1 + 1, pos2 - pos1 - 1); // Obtiene la segunda parte
-                par3 = linea.substr(pos2 + 1); // Obtiene la tercera parte
-            } else {
-                // Si no se encontró un segundo espacio, solo hay dos partes
-                par2 = linea.substr(pos1 + 1); // Obtiene la segunda parte
+        cout << linea << endl;
+        int tipo = linea.find(' ');
+        if (tipo != -1) { // verificar si cuenta con un espacio
+            instruccion = linea.substr(0, tipo);
+            string sub_2 = linea.substr(tipo + 1); // subcadena después del primer espacio
+            int esp_sub2 = sub_2.find(' ');
+            if (esp_sub2 != -1) { // hay un segundo espacio
+                stg_posicion_int = sub_2.substr(0, esp_sub2);
+                palabra_agregar = sub_2.substr(esp_sub2 + 1);
+            } else { // no hay segundo espacio
+                stg_posicion_int = sub_2;
+                palabra_agregar = "";
             }
 
-            // Verificar si la segunda parte contiene el nombre "El_Carlos"
-            size_t posElCarlos = par2.find("El_Carlos");
-            if (posElCarlos != string::npos) {
-                // Si la segunda parte contiene "El_Carlos", actualizarla
-                par2 = par2.substr(0, posElCarlos);
-            }
-
-            cout << "Par 1: " << par1 << endl;
-            cout << "Par 2: " << par2 << endl;
-            if (!par3.empty()) {
-                cout << "Par 3: " << par3 << endl;
+            cout << "Instrucción: " << instruccion << endl;
+            cout << "Posición: " << stg_posicion_int << endl;
+            cout << "Palabra a agregar: " << palabra_agregar << endl;
+            
+            // Procesar la instrucción
+            if (instruccion == "INSERTAR") {
+                // Lógica para insertar
+            } else if (instruccion == "ELIMINAR") {
+                // Lógica para eliminar
+            } else if (instruccion == "REVERSO") {
+                // Lógica para reverso
+            } else if (instruccion == "RECORTAR") {
+                // Lógica para recortar
+            } else if (instruccion == "MOSTRAR") {
+                // Lógica para mostrar
             }
         } else {
-            // Si no se encuentra ningún espacio, hay solo una parte
-            cout << "Par único: " << linea << endl;
+            instruccion = linea;
+            if (instruccion == "FIN") {
+                // Lógica para finalizar
+            }
         }
     }
 
     archivo.close(); // cierra el archivo después de terminar de leerlo
     return 0;
 }
+
