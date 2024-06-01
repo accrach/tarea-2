@@ -17,6 +17,7 @@ private:
     int height = 0; // Altura del árbol
     int length = 0; // Largo del super-string
     nodo* root = nullptr; // Raíz del super-string
+
     // Funciones auxiliares
     void clearArbol(nodo* node) {
         if (!node) return;
@@ -31,8 +32,7 @@ private:
         }
         if (idx < node->index) {
             node->left = insert_at_index(node->left, idx, c);
-        } 
-        else {
+        } else {
             node->right = insert_at_index(node->right, idx, c);
         }
         return node;
@@ -73,36 +73,113 @@ private:
         contruccion_string(node->right, result);
     }
 
+    nodo* eliminar_segmento(nodo* node, int l, int r) {
+        if (!node) return nullptr;
+        if (node->index >= l && node->index <= r) {
+            clearArbol(node);
+            return nullptr;
+        }
+        if (node->index < l) {
+            node->right = eliminar_segmento(node->right, l, r);
+        } else {
+            node->left = eliminar_segmento(node->left, l, r);
+        }
+        return node;
+    }
+
+    nodo* insertar_substring(nodo* node, int& idx, const string& s, int& insert_pos) {
+        if (idx < s.length()) {
+            node = insert_at_index(node, insert_pos, s[idx]);
+            idx++;
+            insert_pos++;
+            node = insertar_substring(node, idx, s, insert_pos);
+        }
+        return node;
+    }
+
 public:
     super_string() {}
-    void juntar(super_string& s);
-    void agregar(char c); // Insertar un caracter en la última posición
-    // En la izquierda esta el super_string a y en la derecha el super_string b
-    void separar(int i, super_string& a, super_string& b);
-    void reverso(); // No debe cambiar la altura del árbol
-    int recortar(); // Retorna this->height después de recortar
-    string stringizar(); // Debe ser O(n)
-    void limpiar(); // Se deben borrar todos los nodos del super-string
-};
+    
+    void juntar(super_string& s) {
+        super_string tmp;
+        tmp.root = root;
+        tmp.length = length;
+        
+        root = nullptr;
+        length = 0;
+        separar(tmp.length, *this, s);
+    }
 
+    void agregar(char c) { // Insertar un caracter en la última posición
+        root = insert_at_index(root, length, c);
+        length++;
+    }
+
+    void separar(int i, super_string& a, super_string& b) {
+        nodo* node = buelta_index(root, i);
+        a.root = root;
+        a.length = i;
+        b.root = node;
+        b.length = length - i;
+        root = nullptr;
+        length = 0;
+    }
+
+    void reverso() { // No debe cambiar la altura del árbol
+        root = reversoArbol(root);
+    }
+
+    void reverso_segmento(int l, int r) {
+        super_string a, b, mid;
+        separar(l, a, *this);
+        separar(r - l + 1, mid, b);
+        mid.reverso();
+        juntar(a);
+        juntar(mid);
+        juntar(b);
+    }
+
+    int recortar() { // Retorna this->height después de recortar
+        height = CaluladorDeHaltura(root);
+        return height;
+    }
+
+    string stringizar() { // Debe ser O(n)
+        string result;
+        contruccion_string(root, result);
+        return result;
+    }
+
+    void limpiar() {
+        clearArbol(root);
+        root = nullptr;
+        length = 0;
+    }
+
+    void eliminar(int l, int r) {
+        root = eliminar_segmento(root, l, r);
+    }
+
+    void insertar(int i, const string& s) {
+        int idx = 0, insert_pos = i;
+        root = insertar_substring(root, idx, s, insert_pos);
+        length += s.length();
+    }
+};
 
 int main() {
     super_string Arbol;
     ifstream archivo("prueba.txt");
-    string par1, par2, par3;
 
     if (!archivo.is_open()) {
         cerr << "Error al abrir el archivo" << endl;
         return 1; // error
     }
 
-    string linea;
-    string instruccion;
-    string palabra_agregar;
-    string stg_posicion_int;
-    int posicion_instruccion;
+    string linea, instruccion, palabra_agregar, stg_posicion_int;
 
-    while (getline(archivo, linea)) { // lee el archivo 
+    while (getline(archivo, linea)) { // lee el archivo
+        cout << "Linea leída: " << linea << endl;
         int tipo = linea.find(' ');
         if (tipo != -1) { // verificar si cuenta con un espacio
             instruccion = linea.substr(0, tipo);
@@ -116,26 +193,31 @@ int main() {
                 palabra_agregar = "";
             }
 
-            cout << "Instrucción: " << instruccion << endl;
-            cout << "Posición: " << stg_posicion_int << endl;
-            cout << "Palabra a agregar: " << palabra_agregar << endl;
-            
-            // Procesar la instrucción
             if (instruccion == "INSERTAR") {
-                // Lógica para insertar
+                int pos = stoi(stg_posicion_int);
+                Arbol.insertar(pos, palabra_agregar);
+                cout << "Insertado: " << palabra_agregar << " en posición " << pos << endl;
             } else if (instruccion == "ELIMINAR") {
-                // Lógica para eliminar
+                int l = stoi(stg_posicion_int);
+                int r = stoi(palabra_agregar);
+                Arbol.eliminar(l, r);
+                cout << "Eliminado segmento de " << l << " a " << r << endl;
             } else if (instruccion == "REVERSO") {
-                // Lógica para reverso
-            } else if (instruccion == "RECORTAR") {
-                // Lógica para recortar
-            } else if (instruccion == "MOSTRAR") {
-                // Lógica para mostrar
+                int l = stoi(stg_posicion_int);
+                int r = stoi(palabra_agregar);
+                Arbol.reverso_segmento(l, r);
+                cout << "Reverso del segmento de " << l << " a " << r << endl;
             }
         } else {
             instruccion = linea;
-            if (instruccion == "FIN") {
-                // Lógica para finalizar
+            if (instruccion == "RECORTAR") {
+                cout << "Altura después de recortar: " << Arbol.recortar() << endl;
+            } else if (instruccion == "MOSTRAR") {
+                cout << "Super string: " << Arbol.stringizar() << endl;
+            } else if (instruccion == "FIN") {
+                break;
+            } else {
+                cerr << "Instrucción desconocida o malformada: " << linea << endl;
             }
         }
     }
@@ -143,4 +225,3 @@ int main() {
     archivo.close(); // cierra el archivo después de terminar de leerlo
     return 0;
 }
-
