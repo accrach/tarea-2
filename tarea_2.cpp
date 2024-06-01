@@ -17,6 +17,61 @@ private:
     int height = 0; // Altura del árbol
     int length = 0; // Largo del super-string
     nodo* root = nullptr; // Raíz del super-string
+    // Funciones auxiliares
+    void clearArbol(nodo* node) {
+        if (!node) return;
+        clearArbol(node->left);
+        clearArbol(node->right);
+        delete node;
+    }
+
+    nodo* insert_at_index(nodo* node, int idx, char c) {
+        if (!node) {
+            return new nodo(idx, c);
+        }
+        if (idx < node->index) {
+            node->left = insert_at_index(node->left, idx, c);
+        } 
+        else {
+            node->right = insert_at_index(node->right, idx, c);
+        }
+        return node;
+    }
+
+    nodo* buelta_index(nodo* node, int idx) {
+        if (!node) return nullptr;
+        if (node->index == idx) return node;
+        if (idx < node->index) {
+            auto left = node->left;
+            node->left = nullptr;
+            return left;
+        }
+        auto right = node->right;
+        node->right = nullptr;
+        return right;
+    }
+
+    nodo* reversoArbol(nodo* node) {
+        if (!node) return nullptr;
+        nodo* temp = node->left;
+        node->left = reversoArbol(node->right);
+        node->right = reversoArbol(temp);
+        return node;
+    }
+
+    int CaluladorDeHaltura(nodo* node) {
+        if (!node) return 0;
+        int left_height = CaluladorDeHaltura(node->left);
+        int right_height = CaluladorDeHaltura(node->right);
+        return 1 + max(left_height, right_height);
+    }
+
+    void contruccion_string(nodo* node, string& result) {
+        if (!node) return;
+        contruccion_string(node->left, result);
+        result += node->c;
+        contruccion_string(node->right, result);
+    }
 
 public:
     super_string() {}
@@ -30,7 +85,9 @@ public:
     void limpiar(); // Se deben borrar todos los nodos del super-string
 };
 
+
 int main() {
+    super_string Arbol;
     ifstream archivo("prueba.txt");
     string par1, par2, par3;
 
@@ -46,7 +103,6 @@ int main() {
     int posicion_instruccion;
 
     while (getline(archivo, linea)) { // lee el archivo 
-        cout << linea << endl;
         int tipo = linea.find(' ');
         if (tipo != -1) { // verificar si cuenta con un espacio
             instruccion = linea.substr(0, tipo);
