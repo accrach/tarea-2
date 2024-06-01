@@ -26,14 +26,14 @@ private:
         delete node;
     }
 
-    nodo* insert_at_index(nodo* node, int idx, char c) {
+    nodo* insertarindex(nodo* node, int idx, char c) {
         if (!node) {
             return new nodo(idx, c);
         }
         if (idx < node->index) {
-            node->left = insert_at_index(node->left, idx, c);
+            node->left = insertarindex(node->left, idx, c);
         } else {
-            node->right = insert_at_index(node->right, idx, c);
+            node->right = insertarindex(node->right, idx, c);
         }
         return node;
     }
@@ -89,7 +89,7 @@ private:
 
     nodo* insertar_substring(nodo* node, int& idx, const string& s, int& insert_pos) {
         if (idx < s.length()) {
-            node = insert_at_index(node, insert_pos, s[idx]);
+            node = insertarindex(node, insert_pos, s[idx]);
             idx++;
             insert_pos++;
             node = insertar_substring(node, idx, s, insert_pos);
@@ -111,7 +111,7 @@ public:
     }
 
     void agregar(char c) { // Insertar un caracter en la última posición
-        root = insert_at_index(root, length, c);
+        root = insertarindex(root, length, c);
         length++;
     }
 
