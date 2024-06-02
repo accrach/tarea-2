@@ -8,12 +8,12 @@ using namespace std;
 class super_string {
 private:
     struct nodo {
-        nodo* left = nullptr;
-        nodo* right = nullptr;
-        int index;
-        char c;
-        nodo(int index, char c) {}
-        nodo() {}
+        nodo* left = nullptr; // Puntero al nodo hijo izquierdo
+        nodo* right = nullptr; // Puntero al nodo hijo derecho
+        int index; // Índice del nodo
+        char c; // Caracter del nodo
+        nodo(int index, char c) {} // Constructor que no hace nada, se debe mantener así
+        nodo() {} // Constructor por defecto que no hace nada, se debe mantener así
     };
 
     int height = 0; // Altura del árbol
@@ -21,16 +21,16 @@ private:
     nodo* root = nullptr; // Raíz del super-string
 
     // Funciones auxiliares
-    void clearArbol(nodo* node) {
+    void clearArbol(nodo* node) { // Eliminar nodos del árbol de forma recursiva
         if (!node) return;
         clearArbol(node->left);
         clearArbol(node->right);
         delete node;
     }
 
-    nodo* InsertarIndex(nodo* node, int idx, char c) {
+    nodo* InsertarIndex(nodo* node, int idx, char c) { // Insertar un nodo en el índice especificado
         if (!node) {
-            nodo* newNode = new nodo();
+            nodo* newNode = new nodo(); // Crear un nuevo nodo
             newNode->index = idx;
             newNode->c = c;
             return newNode;
@@ -43,7 +43,7 @@ private:
         return node;
     }
 
-    nodo* buelta_index(nodo* node, int idx) {
+    nodo* buelta_index(nodo* node, int idx) { // Obtener un nodo y sus subárboles según el índice
         if (!node) return nullptr;
         if (node->index == idx) return node;
         if (idx < node->index) {
@@ -56,7 +56,7 @@ private:
         return right;
     }
 
-    nodo* reversoArbol(nodo* node) {
+    nodo* reversoArbol(nodo* node) { // Revertir el árbol de forma recursiva
         if (!node) return nullptr;
         nodo* temp = node->left;
         node->left = reversoArbol(node->right);
@@ -64,21 +64,21 @@ private:
         return node;
     }
 
-    int CaluladorDeHaltura(nodo* node) {
+    int CaluladorDeHaltura(nodo* node) { // Calcular la altura de forma recursiva
         if (!node) return 0;
         int left_height = CaluladorDeHaltura(node->left);
         int right_height = CaluladorDeHaltura(node->right);
         return 1 + max(left_height, right_height);
     }
 
-    void contruccion_string(nodo* node, string& result) {
+    void contruccion_string(nodo* node, string& result) { // Construir el string a partir del árbol
         if (!node) return;
         contruccion_string(node->left, result);
         result += node->c;
         contruccion_string(node->right, result);
     }
 
-    nodo* eliminar_segmento(nodo* node, int l, int r) {
+    nodo* eliminar_segmento(nodo* node, int l, int r) { // Eliminar un segmento de nodos
         if (!node) return nullptr;
         if (node->index >= l && node->index <= r) {
             clearArbol(node);
@@ -92,7 +92,7 @@ private:
         return node;
     }
 
-    nodo* insertar_substring(nodo* node, int& idx, const string& s, int& insert_pos) {
+    nodo* insertar_substring(nodo* node, int& idx, const string& s, int& insert_pos) { // Insertar un substring en el árbol
         if (idx < s.length()) {
             node = InsertarIndex(node, insert_pos, s[idx]);
             idx++;
@@ -104,12 +104,12 @@ private:
 
 public:
     super_string() {}
-    
-    void juntar(super_string& s) {
+
+    void juntar(super_string& s) { // Unir dos super_strings
         super_string tmp;
         tmp.root = root;
         tmp.length = length;
-        
+
         root = nullptr;
         length = 0;
         separar(tmp.length, *this, s);
@@ -120,7 +120,7 @@ public:
         length++;
     }
 
-    void separar(int i, super_string& a, super_string& b) {
+    void separar(int i, super_string& a, super_string& b) { // Separar el super_string en dos a partir del índice i
         nodo* node = buelta_index(root, i);
         a.root = root;
         a.length = i;
@@ -130,11 +130,11 @@ public:
         length = 0;
     }
 
-    void reverso() { // No debe cambiar la altura del árbol
+    void reverso() { // Revertir todo el super_string
         root = reversoArbol(root);
     }
 
-    void reverso_segmento(int l, int r) { //funcion creada por mi
+    void reverso_segmento(int l, int r) { // Revertir un segmento del super_string
         super_string a, b, mid;
         separar(l, a, *this);
         separar(r - l + 1, mid, b);
@@ -144,28 +144,28 @@ public:
         juntar(b);
     }
 
-    int recortar() { // Retorna this->height después de recortar
+    int recortar() { // Retorna la altura del super_string después de recortar
         height = CaluladorDeHaltura(root);
         return height;
     }
 
-    string stringizar() { // Debe ser O(n)
+    string stringizar() { // Construir el string a partir del super_string (debe ser O(n))
         string result;
         contruccion_string(root, result);
         return result;
     }
 
-    void limpiar() {
+    void limpiar() { // Limpiar todo el super_string
         clearArbol(root);
         root = nullptr;
         length = 0;
     }
 
-    void eliminar(int l, int r) {
+    void eliminar(int l, int r) { // Eliminar un segmento del super_string
         root = eliminar_segmento(root, l, r);
     }
 
-    void insertar(int i, const string& s) {
+    void insertar(int i, const string& s) { // Insertar un substring en una posición específica
         int idx = 0, insert_pos = i;
         root = insertar_substring(root, idx, s, insert_pos);
         length += s.length();
@@ -183,28 +183,28 @@ int main() {
 
     string linea, instruccion, palabra_agregar, stg_posicion_int;
 
-    while (getline(archivo, linea)) { // lee el archivo
+    while (getline(archivo, linea)) { // Leer el archivo línea por línea
         int tipo = linea.find(' ');
-        if (tipo != -1) { // verificar si cuenta con un espacio
+        if (tipo != -1) { // Verificar si la línea contiene un espacio
             instruccion = linea.substr(0, tipo);
-            string sub_2 = linea.substr(tipo + 1); // subcadena después del primer espacio
+            string sub_2 = linea.substr(tipo + 1); // Subcadena después del primer espacio
             int esp_sub2 = sub_2.find(' ');
-            if (esp_sub2 != -1) { // hay un segundo espacio
+            if (esp_sub2 != -1) { // Hay un segundo espacio
                 stg_posicion_int = sub_2.substr(0, esp_sub2);
                 palabra_agregar = sub_2.substr(esp_sub2 + 1);
-            } else { // no hay segundo espacio
+            } else { // No hay segundo espacio
                 stg_posicion_int = sub_2;
                 palabra_agregar = "";
             }
 
-            if (instruccion == "INSERTAR") {
+            if (instruccion == "INSERTAR") { // Instrucción INSERTAR
                 int pos = stoi(stg_posicion_int);
                 Arbol.insertar(pos, palabra_agregar);
-            } else if (instruccion == "ELIMINAR") {
+            } else if (instruccion == "ELIMINAR") { // Instrucción ELIMINAR
                 int l = stoi(stg_posicion_int);
                 int r = stoi(palabra_agregar);
                 Arbol.eliminar(l, r);
-            } else if (instruccion == "REVERSO") {
+            } else if (instruccion == "REVERSO") { // Instrucción REVERSO
                 int l = stoi(stg_posicion_int);
                 int r = stoi(palabra_agregar);
                 Arbol.reverso_segmento(l, r);
@@ -212,11 +212,11 @@ int main() {
             }
         } else {
             instruccion = linea;
-            if (instruccion == "RECORTAR") {
+            if (instruccion == "RECORTAR") { // Instrucción RECORTAR
                 cout << "Altura después de recortar: " << Arbol.recortar() << endl;
-            } else if (instruccion == "MOSTRAR") {
-                cout <<Arbol.stringizar() << endl;
-            } else if (instruccion == "FIN") {
+            } else if (instruccion == "MOSTRAR") { // Instrucción MOSTRAR
+                cout << Arbol.stringizar() << endl;
+            } else if (instruccion == "FIN") { // Instrucción FIN
                 break;
             } else {
                 cerr << "Instrucción desconocida o malformada: " << linea << endl;
@@ -224,6 +224,6 @@ int main() {
         }
     }
 
-    archivo.close(); // cierra el archivo después de terminar de leerlo
+    archivo.close(); // Cierra el archivo después de terminar de leerlo
     return 0;
 }
