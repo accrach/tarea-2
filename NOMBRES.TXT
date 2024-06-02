@@ -1,0 +1,9 @@
+1 nombre: Matias Gomez
+1 rol: 202373033-5
+1 paralelo:
+2 nombre: Nicolas Vergara 
+2 rol: 202373123-4 
+2 paralelo: 
+
+las funciones auxiliareas y logica de las funciones de tda de fueron echas por matias y la logica para leer el archivo texto
+fue echo por nicolas. 
