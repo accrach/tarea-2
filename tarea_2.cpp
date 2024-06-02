@@ -134,7 +134,7 @@ public:
         root = reversoArbol(root);
     }
 
-    void reverso_segmento(int l, int r) {
+    void reverso_segmento(int l, int r) { //funcion creada por mi
         super_string a, b, mid;
         separar(l, a, *this);
         separar(r - l + 1, mid, b);
@@ -184,7 +184,6 @@ int main() {
     string linea, instruccion, palabra_agregar, stg_posicion_int;
 
     while (getline(archivo, linea)) { // lee el archivo
-        cout << "Linea leída: " << linea << endl;
         int tipo = linea.find(' ');
         if (tipo != -1) { // verificar si cuenta con un espacio
             instruccion = linea.substr(0, tipo);
@@ -201,12 +200,10 @@ int main() {
             if (instruccion == "INSERTAR") {
                 int pos = stoi(stg_posicion_int);
                 Arbol.insertar(pos, palabra_agregar);
-                cout << "Insertado: " << palabra_agregar << " en posición " << pos << endl;
             } else if (instruccion == "ELIMINAR") {
                 int l = stoi(stg_posicion_int);
                 int r = stoi(palabra_agregar);
                 Arbol.eliminar(l, r);
-                cout << "Eliminado segmento de " << l << " a " << r << endl;
             } else if (instruccion == "REVERSO") {
                 int l = stoi(stg_posicion_int);
                 int r = stoi(palabra_agregar);
@@ -218,7 +215,7 @@ int main() {
             if (instruccion == "RECORTAR") {
                 cout << "Altura después de recortar: " << Arbol.recortar() << endl;
             } else if (instruccion == "MOSTRAR") {
-                cout << "Super string: " << Arbol.stringizar() << endl;
+                cout <<Arbol.stringizar() << endl;
             } else if (instruccion == "FIN") {
                 break;
             } else {
