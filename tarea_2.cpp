@@ -8,10 +8,12 @@ using namespace std;
 class super_string {
 private:
     struct nodo {
-        nodo* left = nullptr, * right = nullptr;
+        nodo* left = nullptr;
+        nodo* right = nullptr;
         int index;
         char c;
-        nodo(int index, char c) : index(index), c(c) {}
+        nodo(int index, char c) {}
+        nodo() {}
     };
 
     int height = 0; // Altura del árbol
@@ -26,14 +28,17 @@ private:
         delete node;
     }
 
-    nodo* insertarindex(nodo* node, int idx, char c) {
+    nodo* InsertarIndex(nodo* node, int idx, char c) {
         if (!node) {
-            return new nodo(idx, c);
+            nodo* newNode = new nodo();
+            newNode->index = idx;
+            newNode->c = c;
+            return newNode;
         }
         if (idx < node->index) {
-            node->left = insertarindex(node->left, idx, c);
+            node->left = InsertarIndex(node->left, idx, c);
         } else {
-            node->right = insertarindex(node->right, idx, c);
+            node->right = InsertarIndex(node->right, idx, c);
         }
         return node;
     }
@@ -89,7 +94,7 @@ private:
 
     nodo* insertar_substring(nodo* node, int& idx, const string& s, int& insert_pos) {
         if (idx < s.length()) {
-            node = insertarindex(node, insert_pos, s[idx]);
+            node = InsertarIndex(node, insert_pos, s[idx]);
             idx++;
             insert_pos++;
             node = insertar_substring(node, idx, s, insert_pos);
@@ -111,7 +116,7 @@ public:
     }
 
     void agregar(char c) { // Insertar un caracter en la última posición
-        root = insertarindex(root, length, c);
+        root = InsertarIndex(root, length, c);
         length++;
     }
 
